@@ -1,6 +1,6 @@
 """Domain-Driven Design: Aggregate Root abstract base class."""
 from abc import ABC
-from typing import List
+from typing import Any, List
 from .entity import Entity
 
 

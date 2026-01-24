@@ -1,17 +1,14 @@
 """Customer API: Customer routes."""
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, EmailStr
 from customer.application.use_cases import CreateCustomer
 from customer.application.dtos import CreateCustomerRequest, CustomerResponse
-from customer.infrastructure.persistence import InMemoryCustomerRepository
-
+from customer.domain.repositories import CustomerRepository
+from customer.api.dependencies import get_customer_repository
 
 
 # Create router
 router = APIRouter(prefix='/api/customers', tags=['customers'])
-
-# Initialize repository (in real app, use dependency injection)
-customer_repository = InMemoryCustomerRepository()
 
 
 # Request/Response models (API layer only)
@@ -37,7 +34,10 @@ class CustomerApiResponse(BaseModel):
     summary="Create a new customer",
     description="Creates a new customer with the provided information"
 )
-def create_customer(request: CreateCustomerApiRequest):
+def create_customer(
+    request: CreateCustomerApiRequest,
+    repository: CustomerRepository = Depends(get_customer_repository)
+):
     """
     Create a new customer.
 
@@ -53,8 +53,8 @@ def create_customer(request: CreateCustomerApiRequest):
             email=request.email
         )
 
-        # Execute use case
-        use_case = CreateCustomer(customer_repository)
+        # Execute use case with injected repository
+        use_case = CreateCustomer(repository)
         response: CustomerResponse = use_case.execute(create_request)
 
         # Convert Application DTO to API response

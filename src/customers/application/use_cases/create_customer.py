@@ -1,10 +1,10 @@
 """Customer application: Create Customer use case."""
-from customer.domain.customer import Customer
-from customer.domain.repositories import CustomerRepository
-from customer.application.dtos import CreateCustomerRequest, CustomerResponse
+from customers.domain.customer import Customer
+from customers.domain.repositories import CustomerRepository
+from customers.application.dtos import CreateCustomerRequest, CreateCustomerResponse
 
 
-class CreateCustomer:
+class CreateCustomerDomainService:
     """Use case for creating a new customer."""
 
     def __init__(self, customer_repository: CustomerRepository):
@@ -16,7 +16,7 @@ class CreateCustomer:
         """
         self._customer_repository = customer_repository
 
-    def execute(self, request: CreateCustomerRequest) -> CustomerResponse:
+    def execute(self, request: CreateCustomerRequest) -> CreateCustomerResponse:
         """
         Execute the create customer use case.
 
@@ -45,7 +45,7 @@ class CreateCustomer:
         self._customer_repository.add(customer)
 
         # Return response
-        return CustomerResponse(
+        return CreateCustomerResponse(
             customer_id=customer.customer_id,
             first_name=customer.name.first_name,
             last_name=customer.name.last_name,

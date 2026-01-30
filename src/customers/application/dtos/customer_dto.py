@@ -12,7 +12,7 @@ class CreateCustomerRequest:
 
 
 @dataclass
-class CustomerResponse:
+class CreateCustomerResponse:
     """Response DTO for customer operations."""
     customer_id: UUID
     first_name: str

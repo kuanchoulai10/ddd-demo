@@ -2,8 +2,8 @@
 from typing import Dict, List, Optional
 from uuid import UUID, uuid4
 from domain.adapter import Adapter
-from customer.domain.customer import Customer
-from customer.domain.repositories import CustomerRepository
+from customers.domain.customer import Customer
+from customers.domain.repositories import CustomerRepository
 
 
 class InMemoryCustomerRepository(CustomerRepository, Adapter):

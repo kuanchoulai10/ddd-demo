@@ -1,14 +1,9 @@
 """Customer API: Customer routes."""
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, EmailStr
-from customer.application.use_cases import CreateCustomer
-from customer.application.dtos import CreateCustomerRequest, CustomerResponse
-from customer.domain.repositories import CustomerRepository
-from customer.api.dependencies import get_customer_repository
-
-
-# Create router
-router = APIRouter(prefix='/api/customers', tags=['customers'])
+from customers.application.use_cases import CreateCustomerDomainService
+from customers.application.dtos import CreateCustomerRequest, CreateCustomerResponse
+from customers.api.dependencies import get_create_customer_use_case
 
 
 # Request/Response models (API layer only)
@@ -19,24 +14,26 @@ class CreateCustomerApiRequest(BaseModel):
     email: EmailStr
 
 
-class CustomerApiResponse(BaseModel):
+class CreateCustomerApiResponse(BaseModel):
     """API response model for customer."""
     customer_id: str
     first_name: str
     last_name: str
     email: str
 
+# Create router
+router = APIRouter()
 
 @router.post(
-    '',
-    response_model=CustomerApiResponse,
+    '/',
+    response_model=CreateCustomerApiResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Create a new customer",
     description="Creates a new customer with the provided information"
 )
 def create_customer(
     request: CreateCustomerApiRequest,
-    repository: CustomerRepository = Depends(get_customer_repository)
+    use_case: CreateCustomerDomainService = Depends(get_create_customer_use_case)
 ):
     """
     Create a new customer.
@@ -54,11 +51,10 @@ def create_customer(
         )
 
         # Execute use case with injected repository
-        use_case = CreateCustomer(repository)
-        response: CustomerResponse = use_case.execute(create_request)
+        response: CreateCustomerResponse = use_case.execute(create_request)
 
         # Convert Application DTO to API response
-        return CustomerApiResponse(
+        return CreateCustomerApiResponse(
             customer_id=str(response.customer_id),
             first_name=response.first_name,
             last_name=response.last_name,

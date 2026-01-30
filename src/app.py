@@ -1,6 +1,6 @@
 """FastAPI application entry point."""
 from fastapi import FastAPI
-from customer.api import router as customer_router
+from customers.api import router
 
 
 def create_app() -> FastAPI:
@@ -12,7 +12,7 @@ def create_app() -> FastAPI:
     )
 
     # Include routers
-    app.include_router(customer_router)
+    app.include_router(router)
 
     return app
 
